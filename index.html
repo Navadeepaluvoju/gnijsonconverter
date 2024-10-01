@@ -4,112 +4,52 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <title>Excel to JSON Converter</title>
-        <link rel="icon" href="gni_logo.png" type="image/png">
     <!-- XLSX Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
-        <h1 class="text-2xl font-semibold text-center mb-6">
-            Excel to JSON Converter
-        </h1>
-        <p class="text-center text-gray-600">
-            Upload an Excel spreadsheet and convert it to a JSON file.
-        </p>
+        <h1 class="text-2xl font-semibold text-center mb-6">Excel to JSON Converter</h1>
+        <p class="text-center text-gray-600">Upload an Excel spreadsheet and convert it to a JSON file.</p>
     </div>
 
     <div class="container mx-auto p-8 bg-white shadow-md rounded-md">
         <div class="flex justify-center mb-4">
             <div class="w-2/3">
-                <input
-                    class="w-full py-2 px-3 border border-gray-300 rounded"
-                    type="file"
-                    id="input"
-                    accept=".xls,.xlsx"
-                />
+                <input class="w-full py-2 px-3 border border-gray-300 rounded" type="file" id="input" accept=".xls,.xlsx" />
             </div>
             <div class="w-1/3 flex justify-center items-center">
-                <button
-                    class="bg-blue-500 text-white py-2 px-4 rounded"
-                    id="convertButton"
-                >
-                    Convert
-                </button>
+                <button class="bg-blue-500 text-white py-2 px-4 rounded" id="convertButton">Convert</button>
             </div>
         </div>
 
         <div class="flex justify-center">
             <div class="w-2/3 flex space-x-2">
-                <button
-                    class="bg-green-500 text-white py-2 px-4 rounded"
-                    id="copyButton"
-                >
-                    Copy JSON Data
-                </button>
-                <button
-                    class="bg-green-500 text-white py-2 px-4 rounded"
-                    id="downloadButton"
-                >
-                    Download JSON Data
-                </button>
-                <!-- <button
-                    class="bg-purple-500 text-white py-2 px-4 rounded"
-                    id="uploadButton"
-                >
-                    Upload to Firebase
-                </button> -->
+                <button class="bg-green-500 text-white py-2 px-4 rounded" id="copyButton">Copy JSON Data</button>
+                <button class="bg-green-500 text-white py-2 px-4 rounded" id="downloadButton">Download JSON Data</button>
             </div>
         </div>
     </div>
 
     <div class="container mx-auto p-8 mt-4 bg-white rounded-md">
         <div class="w-full">
-            <h5 class="text-xl font-medium mb-2">
-                Converted JSON Data will be displayed below
-            </h5>
+            <h5 class="text-xl font-medium mb-2">Converted JSON Data will be displayed below</h5>
             <pre class="bg-gray-100 p-4" id="jsondata"></pre>
         </div>
     </div>
 
     <script>
-        // -------------------------
-        // Firebase Configuration
-        // -------------------------
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-    apiKey: "AIzaSyCD21eOLrBrdh_Brjs8TV4K_rqQhKzQxOU",
-    authDomain: "gni-results-analysis.firebaseapp.com",
-    projectId: "gni-results-analysis",
-    storageBucket: "gni-results-analysis.appspot.com",
-    messagingSenderId: "958664799873",
-    appId: "1:958664799873:web:37c66fb90fdbc423ec7f80",
-    measurementId: "G-CZF7X9MEHW"
-  };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        let jsonData = []; // Declare jsonData at the top
 
-        // -------------------------
-        // Event Listeners
-        // -------------------------
-        document.getElementById('convertButton').addEventListener('click', handleFile);
-        document.getElementById('copyButton').addEventListener('click', copyJSON);
-        document.getElementById('downloadButton').addEventListener('click', downloadJSON);
-        document.getElementById('uploadButton').addEventListener('click', uploadToFirebase);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('convertButton').addEventListener('click', handleFile);
+            document.getElementById('copyButton').addEventListener('click', copyJSON);
+            document.getElementById('downloadButton').addEventListener('click', downloadJSON);
+        });
 
-        let jsonData = [];
-
-        // -------------------------
         // Handle File Conversion
-        // -------------------------
         function handleFile() {
             const fileInput = document.getElementById('input');
             const file = fileInput.files[0];
@@ -132,9 +72,7 @@ const firebaseConfig = {
             reader.readAsArrayBuffer(file);
         }
 
-        // -------------------------
         // Process Data Function
-        // -------------------------
         function processData(teacherData) {
             let updatedData = [];
 
@@ -179,9 +117,7 @@ const firebaseConfig = {
             return updatedData;
         }
 
-        // -------------------------
         // Copy JSON to Clipboard
-        // -------------------------
         function copyJSON() {
             const jsonStr = JSON.stringify(jsonData, null, 2);
             navigator.clipboard.writeText(jsonStr).then(() => {
@@ -191,9 +127,7 @@ const firebaseConfig = {
             });
         }
 
-        // -------------------------
         // Download JSON File
-        // -------------------------
         function downloadJSON() {
             const jsonStr = JSON.stringify(jsonData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -205,50 +139,6 @@ const firebaseConfig = {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        }
-
-        // -------------------------
-        // Upload JSON to Firebase Firestore
-        // -------------------------
-        function uploadToFirebase() {
-            if (jsonData.length === 0) {
-                alert('No JSON data to upload. Please convert an Excel file first.');
-                return;
-            }
-
-            const collectionRef = db.collection('teachersData'); // Change collection name if desired
-            const batchSize = 500; // Firestore's maximum batch size
-            let batches = [];
-            let batch = db.batch();
-
-            jsonData.forEach((doc, index) => {
-                const docRef = collectionRef.doc(); // Auto-generated ID
-                batch.set(docRef, doc);
-                if ((index + 1) % batchSize === 0) {
-                    batches.push(batch);
-                    batch = db.batch();
-                }
-            });
-
-            // Push the remaining batch
-            if (jsonData.length % batchSize !== 0) {
-                batches.push(batch);
-            }
-
-            // Commit all batches sequentially
-            let promise = Promise.resolve();
-            batches.forEach((b) => {
-                promise = promise.then(() => b.commit());
-            });
-
-            promise
-                .then(() => {
-                    alert('All data successfully uploaded to Firebase Firestore!');
-                })
-                .catch((error) => {
-                    console.error('Error uploading data: ', error);
-                    alert('Failed to upload some or all data to Firebase.');
-                });
         }
     </script>
 </body>
